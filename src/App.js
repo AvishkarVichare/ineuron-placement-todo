@@ -1,25 +1,49 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useReducer, useState } from 'react';
+import todoReducer from './reducer';
 
-function App() {
+const App = () => {
+  const [todos, dispatch] = useReducer(todoReducer, []);
+  const [todoText, setTodoText] = useState('');
+
+  const handleAddTodo = () => {
+    if (todoText.trim()) {
+      dispatch({ type: 'ADD_TODO', payload: todoText });
+      setTodoText('');
+    }
+  };
+
+  const handleToggleTodo = id => {
+    dispatch({ type: 'TOGGLE_TODO', payload: id });
+  };
+
+  const handleDeleteTodo = id => {
+    dispatch({ type: 'DELETE_TODO', payload: id });
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Todo App</h1>
+      <input
+        type="text"
+        value={todoText}
+        onChange={e => setTodoText(e.target.value)}
+        placeholder="Enter a todo"
+      />
+      <button onClick={handleAddTodo}>Add</button>
+      <ul>
+        {todos.map(todo => (
+          <li
+            key={todo.id}
+            style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}
+            onClick={() => handleToggleTodo(todo.id)}
+          >
+            {todo.text}
+            <button onClick={() => handleDeleteTodo(todo.id)}>Delete</button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
-}
+};
 
 export default App;
